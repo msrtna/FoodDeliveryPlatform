@@ -1,0 +1,23 @@
+<Solution>
+  <Folder Name="/deploy/" />
+  <Folder Name="/docs/" />
+  <Folder Name="/src/" />
+  <Folder Name="/src/ApiGateway/" />
+  <Folder Name="/src/BuildingBlocks/" />
+  <Folder Name="/src/BuildingBlocks/Common/" />
+  <Folder Name="/src/BuildingBlocks/Messaging/" />
+  <Folder Name="/src/BuildingBlocks/Observability/" />
+  <Folder Name="/src/Services/" />
+  <Folder Name="/src/Services/Delivery/" />
+  <Folder Name="/src/Services/Identity/">
+    <Project Path="src/Services/Identity/Identity.Api/Identity.Api.csproj" />
+    <Project Path="src/Services/Identity/Identity.Application/Identity.Application.csproj" />
+    <Project Path="src/Services/Identity/Identity.Domain/Identity.Domain.csproj" />
+    <Project Path="src/Services/Identity/Identity.Infrastructure/Identity.Infrastructure.csproj" />
+  </Folder>
+  <Folder Name="/src/Services/Notification/" />
+  <Folder Name="/src/Services/Ordering/" />
+  <Folder Name="/src/Services/Payment/" />
+  <Folder Name="/src/Services/Restaurant/" />
+  <Folder Name="/tests/" />
+</Solution>
