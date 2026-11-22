@@ -17,4 +17,16 @@ public interface IIdentityService
     Task<AuthenticatedUser?> GetByIdAsync(
         string userId,
         CancellationToken cancellationToken);
+
+    Task<IdentityOperationResult> UpdateProfileAsync(
+        string userId,
+        string firstName,
+        string lastName,
+        CancellationToken cancellationToken);
+
+    Task<IdentityOperationResult> ChangeEmailAsync(
+    string userId,
+    string newEmail,
+    string currentPassword,
+    CancellationToken cancellationToken);
 }

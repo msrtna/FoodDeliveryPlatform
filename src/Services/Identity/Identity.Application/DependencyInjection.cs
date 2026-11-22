@@ -1,5 +1,7 @@
 ﻿using FluentValidation;
 using Identity.Application.Abstractions.Authentication;
+using Identity.Application.Features.Account.ChangeEmail;
+using Identity.Application.Features.Account.UpdateProfile;
 using Identity.Application.Features.Authentication.Login;
 using Identity.Application.Features.Authentication.Refresh;
 using Identity.Application.Features.Authentication.Register;
@@ -24,6 +26,8 @@ public static class DependencyInjection
         services.AddScoped<RegisterHandler>();
         services.AddScoped<LoginHandler>();
         services.AddScoped<RefreshHandler>();
+        services.AddScoped<UpdateProfileHandler>();
+        services.AddScoped<ChangeEmailHandler>();
 
         return services;
     }
