@@ -1,4 +1,5 @@
 ﻿using Identity.Application.Abstractions.Authentication;
+using Identity.Application.Abstractions.Identity;
 using Identity.Application.Abstractions.Persistence;
 using Identity.Infrastructure.Identity;
 using Identity.Infrastructure.Persistence;
@@ -41,6 +42,7 @@ public static class DependencyInjection
         services.AddScoped<IRefreshTokenRepository, RefreshTokenRepository>();
         services.AddSingleton<IRefreshTokenService, RefreshTokenService>();
         services.AddScoped<IJwtTokenService, JwtTokenService>();
+        services.AddScoped<IIdentityService, IdentityService>();
 
         return services;
     }
