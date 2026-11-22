@@ -81,4 +81,27 @@ public sealed class IdentityService : IIdentityService
             user.Email ?? string.Empty,
             roles.ToArray());
     }
+
+    public async Task<AuthenticatedUser?> GetByIdAsync(
+        string userId,
+        CancellationToken cancellationToken)
+    {
+        cancellationToken.ThrowIfCancellationRequested();
+
+        var user = await _userManager.FindByIdAsync(userId);
+
+        if (user is null || !user.IsActive)
+        {
+            return null;
+        }
+
+        var roles = await _userManager.GetRolesAsync(user);
+
+        return new AuthenticatedUser(
+            user.Id,
+            user.FirstName,
+            user.LastName,
+            user.Email ?? string.Empty,
+            roles.ToArray());
+    }
 }

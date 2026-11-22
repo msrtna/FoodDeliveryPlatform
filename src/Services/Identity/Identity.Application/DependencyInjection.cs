@@ -1,6 +1,7 @@
 ﻿using FluentValidation;
 using Identity.Application.Abstractions.Authentication;
 using Identity.Application.Features.Authentication.Login;
+using Identity.Application.Features.Authentication.Refresh;
 using Identity.Application.Features.Authentication.Register;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -22,6 +23,7 @@ public static class DependencyInjection
 
         services.AddScoped<RegisterHandler>();
         services.AddScoped<LoginHandler>();
+        services.AddScoped<RefreshHandler>();
 
         return services;
     }

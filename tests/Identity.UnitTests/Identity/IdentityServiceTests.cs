@@ -211,4 +211,60 @@ public class IdentityServiceTests
         Assert.Equal("mohammad@example.com", result.Email);
         Assert.Contains("Customer", result.Roles);
     }
+
+    [Fact]
+    public async Task GetByIdAsync_WhenUserExistsAndIsActive_ReturnsAuthenticatedUser()
+    {
+        // Arrange
+        var user = new ApplicationUser
+        {
+            Id = "user-123",
+            FirstName = "John",
+            LastName = "Doe",
+            Email = "john@example.com",
+            IsActive = true
+        };
+
+        _userManagerMock
+            .Setup(x => x.FindByIdAsync(user.Id))
+            .ReturnsAsync(user);
+
+        _userManagerMock
+            .Setup(x => x.GetRolesAsync(user))
+            .ReturnsAsync(new List<string> { "Customer" });
+
+        var service = new IdentityService(_userManagerMock.Object);
+
+        // Act
+        var result = await service.GetByIdAsync(
+            user.Id,
+            CancellationToken.None);
+
+        // Assert
+        Assert.NotNull(result);
+        Assert.Equal(user.Id, result.Id);
+        Assert.Equal("John", result.FirstName);
+        Assert.Equal("Doe", result.LastName);
+        Assert.Equal("john@example.com", result.Email);
+        Assert.Contains("Customer", result.Roles);
+    }
+
+    [Fact]
+    public async Task GetByIdAsync_WhenUserDoesNotExist_ReturnsNull()
+    {
+        // Arrange
+        _userManagerMock
+            .Setup(x => x.FindByIdAsync("unknown-user"))
+            .ReturnsAsync((ApplicationUser?)null);
+
+        var service = new IdentityService(_userManagerMock.Object);
+
+        // Act
+        var result = await service.GetByIdAsync(
+            "unknown-user",
+            CancellationToken.None);
+
+        // Assert
+        Assert.Null(result);
+    }
 }
