@@ -19,5 +19,8 @@
   <Folder Name="/src/Services/Ordering/" />
   <Folder Name="/src/Services/Payment/" />
   <Folder Name="/src/Services/Restaurant/" />
-  <Folder Name="/tests/" />
+  <Folder Name="/tests/">
+    <Project Path="tests/Identity.IntegrationTests/Identity.IntegrationTests.csproj" Id="c18d8e22-94c9-480e-9973-8752018599d7" />
+    <Project Path="tests/Identity.UnitTests/Identity.UnitTests.csproj" Id="2ac25d25-80ee-4b33-bca2-1d21d7548f9b" />
+  </Folder>
 </Solution>

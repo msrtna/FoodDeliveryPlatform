@@ -1,5 +1,9 @@
-﻿using Identity.Infrastructure.Identity;
+﻿using Identity.Application.Abstractions.Authentication;
+using Identity.Application.Abstractions.Identity;
+using Identity.Application.Abstractions.Persistence;
+using Identity.Infrastructure.Identity;
 using Identity.Infrastructure.Persistence;
+using Identity.Infrastructure.Repositories;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
@@ -34,6 +38,11 @@ public static class DependencyInjection
             })
             .AddEntityFrameworkStores<ApplicationDbContext>()
             .AddDefaultTokenProviders();
+
+        services.AddScoped<IRefreshTokenRepository, RefreshTokenRepository>();
+        services.AddSingleton<IRefreshTokenService, RefreshTokenService>();
+        services.AddScoped<IJwtTokenService, JwtTokenService>();
+        services.AddScoped<IIdentityService, IdentityService>();
 
         return services;
     }
