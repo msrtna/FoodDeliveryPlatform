@@ -69,6 +69,46 @@ public sealed class RefreshTokenIntegrationTests
             response.StatusCode);
     }
 
+    [Fact]
+    public async Task Refresh_ReusingOldToken_RevokesEntireTokenFamily()
+    {
+        // Arrange
+        var originalTokens = await RegisterAndLoginAsync();
+
+        // Act: First refresh - rotate the token
+        var firstRefreshResponse = await _client.PostAsJsonAsync(
+            "/api/authentication/refresh",
+            new { RefreshToken = originalTokens.RefreshToken });
+
+        Assert.Equal(HttpStatusCode.OK, firstRefreshResponse.StatusCode);
+
+        var rotatedTokens =
+            await firstRefreshResponse.Content.ReadFromJsonAsync<TokenResponse>();
+
+        Assert.NotNull(rotatedTokens);
+
+        // Act: Reuse the original token
+        var replayResponse = await _client.PostAsJsonAsync(
+            "/api/authentication/refresh",
+            new { RefreshToken = originalTokens.RefreshToken });
+
+        // Assert: Replay must be rejected
+        Assert.Equal(
+            HttpStatusCode.Unauthorized,
+            replayResponse.StatusCode);
+
+        // Act: Try using the newly rotated token
+        var familyTokenResponse = await _client.PostAsJsonAsync(
+            "/api/authentication/refresh",
+            new { RefreshToken = rotatedTokens.RefreshToken });
+
+        // Assert: The entire token family must be revoked
+        Assert.Equal(
+            HttpStatusCode.Unauthorized,
+            familyTokenResponse.StatusCode);
+    }
+
+
     private async Task<TokenResponse> RegisterAndLoginAsync()
     {
         var email = $"user-{Guid.NewGuid():N}@example.com";
