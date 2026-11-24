@@ -1,10 +1,14 @@
-﻿using Restaurant.Domain.Common;
+﻿
+using Restaurant.Domain.Common;
 using Restaurant.Domain.Exceptions;
+using Restaurant.Domain.ValueObjects;
 
 namespace Restaurant.Domain.Entities;
 
 public sealed class Restaurant : BaseEntity
 {
+    private readonly List<WorkingPeriod> _workingPeriods = [];
+
     public string Name { get; private set; } = string.Empty;
 
     public string? Description { get; private set; }
@@ -12,6 +16,9 @@ public sealed class Restaurant : BaseEntity
     public bool IsActive { get; private set; }
 
     public DateTime CreatedAtUtc { get; private set; }
+
+    public IReadOnlyCollection<WorkingPeriod> WorkingPeriods =>
+        _workingPeriods.AsReadOnly();
 
     private Restaurant()
     {
@@ -33,6 +40,41 @@ public sealed class Restaurant : BaseEntity
 
         Name = validatedName;
         Description = validatedDescription;
+    }
+
+    public void UpdateWorkingPeriods(
+        IEnumerable<WorkingPeriod> workingPeriods)
+    {
+        ArgumentNullException.ThrowIfNull(workingPeriods);
+
+        var periods = workingPeriods.ToList();
+
+        if (periods.Any(period => period is null))
+        {
+            throw new DomainException(
+                "Working periods cannot contain null values.");
+        }
+
+        foreach (var dayGroup in periods.GroupBy(
+                     period => period.DayOfWeek))
+        {
+            var orderedPeriods = dayGroup
+                .OrderBy(period => period.OpenTime)
+                .ToList();
+
+            for (var i = 1; i < orderedPeriods.Count; i++)
+            {
+                if (orderedPeriods[i].OpenTime <
+                    orderedPeriods[i - 1].CloseTime)
+                {
+                    throw new DomainException(
+                        $"Working periods cannot overlap on {dayGroup.Key}.");
+                }
+            }
+        }
+
+        _workingPeriods.Clear();
+        _workingPeriods.AddRange(periods);
     }
 
     public void Activate()
