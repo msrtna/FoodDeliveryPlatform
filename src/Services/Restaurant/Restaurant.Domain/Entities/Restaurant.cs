@@ -1,5 +1,4 @@
-﻿
-using Restaurant.Domain.Common;
+﻿using Restaurant.Domain.Common;
 using Restaurant.Domain.Exceptions;
 using Restaurant.Domain.ValueObjects;
 
@@ -13,6 +12,8 @@ public sealed class Restaurant : BaseEntity
 
     public string? Description { get; private set; }
 
+    public RestaurantAddress Address { get; private set; } = null!;
+
     public bool IsActive { get; private set; }
 
     public DateTime CreatedAtUtc { get; private set; }
@@ -24,10 +25,14 @@ public sealed class Restaurant : BaseEntity
     {
     }
 
-    public Restaurant(string name, string? description = null)
+    public Restaurant(
+        string name,
+        RestaurantAddress address,
+        string? description = null)
     {
         Name = ValidateName(name);
         Description = ValidateDescription(description);
+        Address = address ?? throw new ArgumentNullException(nameof(address));
 
         IsActive = true;
         CreatedAtUtc = DateTime.UtcNow;
@@ -40,6 +45,11 @@ public sealed class Restaurant : BaseEntity
 
         Name = validatedName;
         Description = validatedDescription;
+    }
+
+    public void UpdateAddress(RestaurantAddress address)
+    {
+        Address = address ?? throw new ArgumentNullException(nameof(address));
     }
 
     public void UpdateWorkingPeriods(

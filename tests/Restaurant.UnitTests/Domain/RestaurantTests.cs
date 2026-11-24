@@ -1,5 +1,6 @@
-﻿using RestaurantEntity = Restaurant.Domain.Entities.Restaurant;
-using Restaurant.Domain.Exceptions;
+﻿using Restaurant.Domain.Exceptions;
+using Restaurant.Domain.ValueObjects;
+using RestaurantEntity = Restaurant.Domain.Entities.Restaurant;
 
 namespace Restaurant.UnitTests.Domain;
 
@@ -13,7 +14,11 @@ public sealed class RestaurantTests
         const string description = "  Fresh pizza  ";
 
         // Act
-        var restaurant = new RestaurantEntity(name, description);
+        var restaurant = new RestaurantEntity(name,
+    new RestaurantAddress(
+        "Tehran Province",
+        "Tehran",
+        "Valiasr Street"), description);
 
         // Assert
         Assert.NotEqual(Guid.Empty, restaurant.Id);
@@ -30,7 +35,11 @@ public sealed class RestaurantTests
     public void Constructor_WithEmptyName_ThrowsDomainException(string name)
     {
         // Act
-        var action = () => new RestaurantEntity(name);
+        var action = () => new RestaurantEntity(name,
+    new RestaurantAddress(
+        "Tehran Province",
+        "Tehran",
+        "Valiasr Street"));
 
         // Assert
         Assert.Throws<DomainException>(action);
@@ -43,7 +52,11 @@ public sealed class RestaurantTests
         var name = new string('A', 151);
 
         // Act
-        var action = () => new RestaurantEntity(name);
+        var action = () => new RestaurantEntity(name,
+    new RestaurantAddress(
+        "Tehran Province",
+        "Tehran",
+        "Valiasr Street"));
 
         // Assert
         Assert.Throws<DomainException>(action);
@@ -56,7 +69,11 @@ public sealed class RestaurantTests
         var description = new string('A', 1001);
 
         // Act
-        var action = () => new RestaurantEntity("Pizza House", description);
+        var action = () => new RestaurantEntity("Pizza House",
+    new RestaurantAddress(
+        "Tehran Province",
+        "Tehran",
+        "Valiasr Street"), description);
 
         // Assert
         Assert.Throws<DomainException>(action);
@@ -66,7 +83,11 @@ public sealed class RestaurantTests
     public void UpdateInfo_WithValidData_UpdatesNameAndDescription()
     {
         // Arrange
-        var restaurant = new RestaurantEntity("Old Name", "Old Description");
+        var restaurant = new RestaurantEntity("Old Name",
+    new RestaurantAddress(
+        "Tehran Province",
+        "Tehran",
+        "Valiasr Street"), "Old Description");
 
         // Act
         restaurant.UpdateInfo("  New Name  ", "  New Description  ");
@@ -80,7 +101,11 @@ public sealed class RestaurantTests
     public void UpdateInfo_WithInvalidDescription_DoesNotChangeExistingData()
     {
         // Arrange
-        var restaurant = new RestaurantEntity("Old Name", "Old Description");
+        var restaurant = new RestaurantEntity("Old Name",
+    new RestaurantAddress(
+        "Tehran Province",
+        "Tehran",
+        "Valiasr Street"), "Old Description");
         var invalidDescription = new string('A', 1001);
 
         // Act
@@ -96,7 +121,11 @@ public sealed class RestaurantTests
     public void UpdateInfo_WithNullDescription_ClearsDescription()
     {
         // Arrange
-        var restaurant = new RestaurantEntity("Pizza House", "Old Description");
+        var restaurant = new RestaurantEntity("Pizza House",
+    new RestaurantAddress(
+        "Tehran Province",
+        "Tehran",
+        "Valiasr Street"), "Old Description");
 
         // Act
         restaurant.UpdateInfo("Pizza House", null);
@@ -109,7 +138,11 @@ public sealed class RestaurantTests
     public void Deactivate_ChangesIsActiveToFalse()
     {
         // Arrange
-        var restaurant = new RestaurantEntity("Pizza House");
+        var restaurant = new RestaurantEntity("Pizza House",
+    new RestaurantAddress(
+        "Tehran Province",
+        "Tehran",
+        "Valiasr Street"));
 
         // Act
         restaurant.Deactivate();
@@ -122,7 +155,11 @@ public sealed class RestaurantTests
     public void Activate_ChangesIsActiveToTrue()
     {
         // Arrange
-        var restaurant = new RestaurantEntity("Pizza House");
+        var restaurant = new RestaurantEntity("Pizza House",
+    new RestaurantAddress(
+        "Tehran Province",
+        "Tehran",
+        "Valiasr Street"));
         restaurant.Deactivate();
 
         // Act

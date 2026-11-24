@@ -10,7 +10,11 @@ public sealed class RestaurantWorkingPeriodsTests
     public void UpdateWorkingPeriods_WithValidPeriods_UpdatesSchedule()
     {
         // Arrange
-        var restaurant = new RestaurantEntity("Test Restaurant");
+        var restaurant = new RestaurantEntity("Test Restaurant",
+    new RestaurantAddress(
+        "Tehran Province",
+        "Tehran",
+        "Valiasr Street"));
 
         var periods = new List<WorkingPeriod>
         {
@@ -42,7 +46,11 @@ public sealed class RestaurantWorkingPeriodsTests
     public void UpdateWorkingPeriods_WithOverlappingPeriods_ThrowsDomainException()
     {
         // Arrange
-        var restaurant = new RestaurantEntity("Test Restaurant");
+        var restaurant = new RestaurantEntity("Test Restaurant",
+    new RestaurantAddress(
+        "Tehran Province",
+        "Tehran",
+        "Valiasr Street"));
 
         var periods = new List<WorkingPeriod>
         {
@@ -67,7 +75,11 @@ public sealed class RestaurantWorkingPeriodsTests
     public void UpdateWorkingPeriods_WithAdjacentPeriods_DoesNotThrow()
     {
         // Arrange
-        var restaurant = new RestaurantEntity("Test Restaurant");
+        var restaurant = new RestaurantEntity("Test Restaurant",
+    new RestaurantAddress(
+        "Tehran Province",
+        "Tehran",
+        "Valiasr Street"));
 
         var periods = new List<WorkingPeriod>
         {
@@ -95,7 +107,11 @@ public sealed class RestaurantWorkingPeriodsTests
     public void UpdateWorkingPeriods_WhenInvalidScheduleIsProvided_PreservesPreviousSchedule()
     {
         // Arrange
-        var restaurant = new RestaurantEntity("Test Restaurant");
+        var restaurant = new RestaurantEntity("Test Restaurant",
+    new RestaurantAddress(
+        "Tehran Province",
+        "Tehran",
+        "Valiasr Street"));
 
         var originalPeriod = new WorkingPeriod(
             DayOfWeek.Monday,
@@ -131,7 +147,11 @@ public sealed class RestaurantWorkingPeriodsTests
     public void UpdateWorkingPeriods_WithEmptyCollection_ClearsSchedule()
     {
         // Arrange
-        var restaurant = new RestaurantEntity("Test Restaurant");
+        var restaurant = new RestaurantEntity("Test Restaurant",
+    new RestaurantAddress(
+        "Tehran Province",
+        "Tehran",
+        "Valiasr Street"));
 
         restaurant.UpdateWorkingPeriods(
         [
@@ -152,7 +172,11 @@ public sealed class RestaurantWorkingPeriodsTests
     public void UpdateWorkingPeriods_WithNullCollection_ThrowsArgumentNullException()
     {
         // Arrange
-        var restaurant = new RestaurantEntity("Test Restaurant");
+        var restaurant = new RestaurantEntity("Test Restaurant",
+    new RestaurantAddress(
+        "Tehran Province",
+        "Tehran",
+        "Valiasr Street"));
 
         // Act
         var action = () => restaurant.UpdateWorkingPeriods(null!);
