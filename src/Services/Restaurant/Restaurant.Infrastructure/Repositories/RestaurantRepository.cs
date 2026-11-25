@@ -41,6 +41,44 @@ public sealed class RestaurantRepository : IRestaurantRepository
             cancellationToken);
     }
 
+    public async Task<(IReadOnlyCollection<RestaurantEntity> Items, int TotalCount)>
+        GetPagedAsync(
+            int pageNumber,
+            int pageSize,
+            string? searchTerm,
+            bool? isActive,
+            CancellationToken cancellationToken = default)
+    {
+        var query = _dbContext.Restaurants
+            .AsNoTracking()
+            .AsQueryable();
+
+        if (!string.IsNullOrWhiteSpace(searchTerm))
+        {
+            var normalizedSearchTerm = searchTerm.Trim();
+
+            query = query.Where(restaurant =>
+                restaurant.Name.Contains(normalizedSearchTerm));
+        }
+
+        if (isActive.HasValue)
+        {
+            query = query.Where(restaurant =>
+                restaurant.IsActive == isActive.Value);
+        }
+
+        var totalCount = await query.CountAsync(cancellationToken);
+
+        var items = await query
+            .OrderBy(restaurant => restaurant.Name)
+            .ThenBy(restaurant => restaurant.Id)
+            .Skip((pageNumber - 1) * pageSize)
+            .Take(pageSize)
+            .ToListAsync(cancellationToken);
+
+        return (items, totalCount);
+    }
+
     public Task SaveChangesAsync(
         CancellationToken cancellationToken = default)
     {

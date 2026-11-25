@@ -31,6 +31,19 @@ public sealed class RestaurantsController : ControllerBase
             new { id = restaurantId });
     }
 
+    [HttpGet]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    public async Task<IActionResult> GetAll(
+        [FromQuery] GetRestaurantsQuery query,
+        CancellationToken cancellationToken)
+    {
+        var result = await _sender.Send(
+            query,
+            cancellationToken);
+
+        return Ok(result);
+    }
+
     [HttpGet("{id:guid}")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]

@@ -1,5 +1,4 @@
-﻿
-using RestaurantEntity = Restaurant.Domain.Entities.Restaurant;
+﻿using RestaurantEntity = Restaurant.Domain.Entities.Restaurant;
 
 namespace Restaurant.Application.Abstractions.Persistence;
 
@@ -16,6 +15,14 @@ public interface IRestaurantRepository
     Task<RestaurantEntity?> GetByIdAsync(
         Guid id,
         CancellationToken cancellationToken = default);
+
+    Task<(IReadOnlyCollection<RestaurantEntity> Items, int TotalCount)>
+        GetPagedAsync(
+            int pageNumber,
+            int pageSize,
+            string? searchTerm,
+            bool? isActive,
+            CancellationToken cancellationToken = default);
 
     Task SaveChangesAsync(
         CancellationToken cancellationToken = default);
