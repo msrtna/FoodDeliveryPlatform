@@ -145,4 +145,22 @@ public sealed class RestaurantsController : ControllerBase
 
         return Ok(result);
     }
+
+    [HttpPut("{id:guid}/working-periods")]
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    public async Task<IActionResult> UpdateWorkingPeriods(
+    Guid id,
+    [FromBody] IReadOnlyCollection<WorkingPeriodInput> workingPeriods,
+    CancellationToken cancellationToken)
+    {
+        var result = await _sender.Send(
+            new UpdateRestaurantWorkingPeriodsCommand(id, workingPeriods),
+            cancellationToken);
+
+        if (!result)
+            return NotFound();
+
+        return NoContent();
+    }
 }
