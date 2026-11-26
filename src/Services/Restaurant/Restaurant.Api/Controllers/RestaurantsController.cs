@@ -1,5 +1,6 @@
 ﻿using MediatR;
 using Microsoft.AspNetCore.Mvc;
+using Restaurant.Application.DTOs.Restaurants;
 using Restaurant.Application.Features.Restaurants.Commands;
 using Restaurant.Application.Features.Restaurants.Queries;
 
@@ -124,5 +125,24 @@ public sealed class RestaurantsController : ControllerBase
         }
 
         return NoContent();
+    }
+
+    [HttpGet("{id:guid}/working-periods")]
+    [ProducesResponseType(
+    typeof(IReadOnlyCollection<WorkingPeriodDto>),
+    StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    public async Task<IActionResult> GetWorkingPeriods(
+    Guid id,
+    CancellationToken cancellationToken)
+    {
+        var result = await _sender.Send(
+            new GetRestaurantWorkingPeriodsQuery(id),
+            cancellationToken);
+
+        if (result is null)
+            return NotFound();
+
+        return Ok(result);
     }
 }
