@@ -87,4 +87,42 @@ public sealed class RestaurantsController : ControllerBase
 
         return NoContent();
     }
+
+    [HttpPatch("{id:guid}/activate")]
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    public async Task<IActionResult> Activate(
+        Guid id,
+        CancellationToken cancellationToken)
+    {
+        var activated = await _sender.Send(
+            new ActivateRestaurantCommand(id),
+            cancellationToken);
+
+        if (!activated)
+        {
+            return NotFound();
+        }
+
+        return NoContent();
+    }
+
+    [HttpPatch("{id:guid}/deactivate")]
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    public async Task<IActionResult> Deactivate(
+        Guid id,
+        CancellationToken cancellationToken)
+    {
+        var deactivated = await _sender.Send(
+            new DeactivateRestaurantCommand(id),
+            cancellationToken);
+
+        if (!deactivated)
+        {
+            return NotFound();
+        }
+
+        return NoContent();
+    }
 }
