@@ -27,6 +27,7 @@
   <Folder Name="/tests/">
     <Project Path="tests/Identity.IntegrationTests/Identity.IntegrationTests.csproj" Id="c18d8e22-94c9-480e-9973-8752018599d7" />
     <Project Path="tests/Identity.UnitTests/Identity.UnitTests.csproj" Id="2ac25d25-80ee-4b33-bca2-1d21d7548f9b" />
+    <Project Path="tests/Restaurant.IntegrationTests/Restaurant.IntegrationTests.csproj" Id="48b5050a-8734-40a0-8a36-270fa74ce40e" />
     <Project Path="tests/Restaurant.UnitTests/Restaurant.UnitTests.csproj" Id="b290d8e8-f161-4c8d-8980-f600b1e725e6" />
   </Folder>
 </Solution>
