@@ -18,9 +18,16 @@
   <Folder Name="/src/Services/Notification/" />
   <Folder Name="/src/Services/Ordering/" />
   <Folder Name="/src/Services/Payment/" />
-  <Folder Name="/src/Services/Restaurant/" />
+  <Folder Name="/src/Services/Restaurant/">
+    <Project Path="src/Services/Restaurant/Restaurant.Api/Restaurant.Api.csproj" Id="f1605154-6bc3-4e1c-9e6a-528c4f9d9d46" />
+    <Project Path="src/Services/Restaurant/Restaurant.Application/Restaurant.Application.csproj" Id="d08c536f-350b-426e-8100-fef8f0f0d8f4" />
+    <Project Path="src/Services/Restaurant/Restaurant.Domain/Restaurant.Domain.csproj" Id="b47c28db-9ebc-4f9b-9625-b7136f6473dd" />
+    <Project Path="src/Services/Restaurant/Restaurant.Infrastructure/Restaurant.Infrastructure.csproj" Id="281daaf4-5139-4c37-b8b4-fc36e4c154ac" />
+  </Folder>
   <Folder Name="/tests/">
     <Project Path="tests/Identity.IntegrationTests/Identity.IntegrationTests.csproj" Id="c18d8e22-94c9-480e-9973-8752018599d7" />
     <Project Path="tests/Identity.UnitTests/Identity.UnitTests.csproj" Id="2ac25d25-80ee-4b33-bca2-1d21d7548f9b" />
+    <Project Path="tests/Restaurant.IntegrationTests/Restaurant.IntegrationTests.csproj" Id="48b5050a-8734-40a0-8a36-270fa74ce40e" />
+    <Project Path="tests/Restaurant.UnitTests/Restaurant.UnitTests.csproj" Id="b290d8e8-f161-4c8d-8980-f600b1e725e6" />
   </Folder>
 </Solution>
