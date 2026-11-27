@@ -1,4 +1,5 @@
 ﻿
+using FluentValidation;
 using Microsoft.AspNetCore.Mvc;
 using Restaurant.Domain.Exceptions;
 
@@ -25,12 +26,44 @@ public sealed class GlobalExceptionMiddleware
         }
         catch (Exception exception)
         {
+            if (context.Response.HasStarted)
+                throw;
+
+            context.Response.Clear();
+
+            if (exception is ValidationException validationException)
+            {
+                _logger.LogWarning(
+                    "Request validation failed: {Errors}",
+                    validationException.Message);
+
+                var errors = validationException.Errors
+                    .GroupBy(error => error.PropertyName)
+                    .ToDictionary(
+                        group => group.Key,
+                        group => group
+                            .Select(error => error.ErrorMessage)
+                            .Distinct()
+                            .ToArray());
+
+                context.Response.StatusCode =
+                    StatusCodes.Status400BadRequest;
+
+                await context.Response.WriteAsJsonAsync(
+                    new ValidationProblemDetails(errors)
+                    {
+                        Status = StatusCodes.Status400BadRequest,
+                        Title = "Validation Failed",
+                        Detail = "One or more validation errors occurred."
+                    },
+                    cancellationToken: context.RequestAborted);
+
+                return;
+            }
+
             _logger.LogError(
                 exception,
                 "An unhandled exception occurred while processing the request.");
-
-            if (context.Response.HasStarted)
-                throw;
 
             var (statusCode, title, detail) = exception switch
             {
@@ -56,7 +89,6 @@ public sealed class GlobalExceptionMiddleware
                     )
             };
 
-            context.Response.Clear();
             context.Response.StatusCode = statusCode;
 
             await context.Response.WriteAsJsonAsync(
