@@ -1,5 +1,4 @@
-﻿
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Restaurant.Application.Abstractions.Persistence;
@@ -27,6 +26,7 @@ public static class DependencyInjection
             options.UseSqlServer(connectionString));
 
         services.AddScoped<IRestaurantRepository, RestaurantRepository>();
+        services.AddScoped<IMenuCategoryRepository, MenuCategoryRepository>();
 
         return services;
     }

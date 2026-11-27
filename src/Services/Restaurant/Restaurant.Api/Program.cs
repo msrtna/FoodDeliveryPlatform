@@ -1,4 +1,5 @@
 
+using Restaurant.Api.Middleware;
 using Restaurant.Application;
 using Restaurant.Infrastructure;
 
@@ -13,6 +14,8 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
 var app = builder.Build();
+
+app.UseMiddleware<GlobalExceptionMiddleware>();
 
 if (app.Environment.IsDevelopment())
 {

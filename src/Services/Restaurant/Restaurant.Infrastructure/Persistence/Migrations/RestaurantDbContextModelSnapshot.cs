@@ -22,6 +22,38 @@ namespace Restaurant.Infrastructure.Persistence.Migrations
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
 
+            modelBuilder.Entity("Restaurant.Domain.Entities.MenuCategory", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("Description")
+                        .HasMaxLength(500)
+                        .HasColumnType("nvarchar(500)");
+
+                    b.Property<int>("DisplayOrder")
+                        .HasColumnType("int");
+
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<Guid>("RestaurantId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("RestaurantId", "Name")
+                        .IsUnique();
+
+                    b.ToTable("MenuCategories", (string)null);
+                });
+
             modelBuilder.Entity("Restaurant.Domain.Entities.Restaurant", b =>
                 {
                     b.Property<Guid>("Id")
@@ -46,6 +78,15 @@ namespace Restaurant.Infrastructure.Persistence.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Restaurants", (string)null);
+                });
+
+            modelBuilder.Entity("Restaurant.Domain.Entities.MenuCategory", b =>
+                {
+                    b.HasOne("Restaurant.Domain.Entities.Restaurant", null)
+                        .WithMany("MenuCategories")
+                        .HasForeignKey("RestaurantId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("Restaurant.Domain.Entities.Restaurant", b =>
@@ -120,6 +161,11 @@ namespace Restaurant.Infrastructure.Persistence.Migrations
                         .IsRequired();
 
                     b.Navigation("WorkingPeriods");
+                });
+
+            modelBuilder.Entity("Restaurant.Domain.Entities.Restaurant", b =>
+                {
+                    b.Navigation("MenuCategories");
                 });
 #pragma warning restore 612, 618
         }

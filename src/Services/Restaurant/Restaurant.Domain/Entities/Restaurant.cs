@@ -7,6 +7,7 @@ namespace Restaurant.Domain.Entities;
 public sealed class Restaurant : BaseEntity
 {
     private readonly List<WorkingPeriod> _workingPeriods = [];
+    private readonly List<MenuCategory> _menuCategories = [];
 
     public string Name { get; private set; } = string.Empty;
 
@@ -20,6 +21,8 @@ public sealed class Restaurant : BaseEntity
 
     public IReadOnlyCollection<WorkingPeriod> WorkingPeriods =>
         _workingPeriods.AsReadOnly();
+    public IReadOnlyCollection<MenuCategory> MenuCategories =>
+    _menuCategories.AsReadOnly();
 
     private Restaurant()
     {
@@ -128,5 +131,39 @@ public sealed class Restaurant : BaseEntity
         return string.IsNullOrEmpty(description)
             ? null
             : description;
+    }
+
+    public void AddMenuCategory(MenuCategory category)
+    {
+        ArgumentNullException.ThrowIfNull(category);
+
+        if (category.RestaurantId != Id)
+        {
+            throw new DomainException(
+                "Menu category belongs to a different restaurant.");
+        }
+
+        if (_menuCategories.Any(existing =>
+            string.Equals(
+                existing.Name,
+                category.Name,
+                StringComparison.OrdinalIgnoreCase)))
+        {
+            throw new DomainException(
+                "A menu category with this name already exists.");
+        }
+
+        _menuCategories.Add(category);
+    }
+
+    public void RemoveMenuCategory(Guid categoryId)
+    {
+        var category = _menuCategories.FirstOrDefault(
+            item => item.Id == categoryId);
+
+        if (category is null)
+            throw new DomainException("Menu category was not found.");
+
+        _menuCategories.Remove(category);
     }
 }

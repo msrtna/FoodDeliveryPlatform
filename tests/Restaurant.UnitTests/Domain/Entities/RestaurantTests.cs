@@ -2,7 +2,7 @@
 using Restaurant.Domain.ValueObjects;
 using RestaurantEntity = Restaurant.Domain.Entities.Restaurant;
 
-namespace Restaurant.UnitTests.Domain;
+namespace Restaurant.UnitTests.Domain.Entities;
 
 public sealed class RestaurantTests
 {
