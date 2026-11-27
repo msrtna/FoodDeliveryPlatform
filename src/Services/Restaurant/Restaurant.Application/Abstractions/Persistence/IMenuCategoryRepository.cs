@@ -9,6 +9,11 @@ public interface IMenuCategoryRepository
         Guid categoryId,
         CancellationToken cancellationToken = default);
 
+    Task<MenuCategory?> GetByIdForUpdateAsync(
+        Guid restaurantId,
+        Guid categoryId,
+        CancellationToken cancellationToken = default);
+
     Task<IReadOnlyCollection<MenuCategory>> GetByRestaurantIdAsync(
         Guid restaurantId,
         bool? isActive = null,

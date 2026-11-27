@@ -25,7 +25,6 @@ namespace Restaurant.Infrastructure.Persistence.Migrations
             modelBuilder.Entity("Restaurant.Domain.Entities.MenuCategory", b =>
                 {
                     b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("Description")
@@ -52,6 +51,40 @@ namespace Restaurant.Infrastructure.Persistence.Migrations
                         .IsUnique();
 
                     b.ToTable("MenuCategories", (string)null);
+                });
+
+            modelBuilder.Entity("Restaurant.Domain.Entities.MenuItem", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("Description")
+                        .HasMaxLength(500)
+                        .HasColumnType("nvarchar(500)");
+
+                    b.Property<int>("DisplayOrder")
+                        .HasColumnType("int");
+
+                    b.Property<bool>("IsAvailable")
+                        .HasColumnType("bit");
+
+                    b.Property<Guid>("MenuCategoryId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(150)
+                        .HasColumnType("nvarchar(150)");
+
+                    b.Property<decimal>("Price")
+                        .HasPrecision(18, 2)
+                        .HasColumnType("decimal(18,2)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("MenuCategoryId");
+
+                    b.ToTable("MenuItems", (string)null);
                 });
 
             modelBuilder.Entity("Restaurant.Domain.Entities.Restaurant", b =>
@@ -85,6 +118,15 @@ namespace Restaurant.Infrastructure.Persistence.Migrations
                     b.HasOne("Restaurant.Domain.Entities.Restaurant", null)
                         .WithMany("MenuCategories")
                         .HasForeignKey("RestaurantId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("Restaurant.Domain.Entities.MenuItem", b =>
+                {
+                    b.HasOne("Restaurant.Domain.Entities.MenuCategory", null)
+                        .WithMany("MenuItems")
+                        .HasForeignKey("MenuCategoryId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });
@@ -161,6 +203,11 @@ namespace Restaurant.Infrastructure.Persistence.Migrations
                         .IsRequired();
 
                     b.Navigation("WorkingPeriods");
+                });
+
+            modelBuilder.Entity("Restaurant.Domain.Entities.MenuCategory", b =>
+                {
+                    b.Navigation("MenuItems");
                 });
 
             modelBuilder.Entity("Restaurant.Domain.Entities.Restaurant", b =>

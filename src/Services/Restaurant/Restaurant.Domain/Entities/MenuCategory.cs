@@ -5,6 +5,8 @@ namespace Restaurant.Domain.Entities;
 
 public sealed class MenuCategory : BaseEntity
 {
+    private readonly List<MenuItem> _menuItems = [];
+
     public Guid RestaurantId { get; private set; }
 
     public string Name { get; private set; } = string.Empty;
@@ -14,6 +16,8 @@ public sealed class MenuCategory : BaseEntity
     public int DisplayOrder { get; private set; }
 
     public bool IsActive { get; private set; }
+
+    public IReadOnlyCollection<MenuItem> MenuItems => _menuItems.AsReadOnly();
 
     private MenuCategory()
     {
@@ -43,6 +47,39 @@ public sealed class MenuCategory : BaseEntity
         Name = ValidateName(name);
         Description = ValidateDescription(description);
         DisplayOrder = ValidateDisplayOrder(displayOrder);
+    }
+
+    public void AddMenuItem(MenuItem menuItem)
+    {
+        ArgumentNullException.ThrowIfNull(menuItem);
+
+        if (menuItem.MenuCategoryId != Id)
+            throw new DomainException(
+                "Menu item does not belong to this category.");
+
+        if (_menuItems.Any(item =>
+                string.Equals(
+                    item.Name,
+                    menuItem.Name,
+                    StringComparison.OrdinalIgnoreCase)))
+        {
+            throw new DomainException(
+                "A menu item with this name already exists in the category.");
+        }
+
+        _menuItems.Add(menuItem);
+    }
+
+    public void RemoveMenuItem(Guid menuItemId)
+    {
+        var menuItem = _menuItems.FirstOrDefault(
+            item => item.Id == menuItemId);
+
+        if (menuItem is null)
+            throw new DomainException(
+                "Menu item was not found in this category.");
+
+        _menuItems.Remove(menuItem);
     }
 
     public void Activate() => IsActive = true;
@@ -84,5 +121,33 @@ public sealed class MenuCategory : BaseEntity
                 "Display order cannot be negative.");
 
         return displayOrder;
+    }
+
+    public void UpdateMenuItem(
+    Guid menuItemId,
+    string name,
+    decimal price,
+    string? description,
+    int displayOrder)
+    {
+        var menuItem = _menuItems.FirstOrDefault(
+            item => item.Id == menuItemId);
+
+        if (menuItem is null)
+            throw new DomainException(
+                "Menu item was not found in this category.");
+
+        if (_menuItems.Any(item =>
+                item.Id != menuItemId &&
+                string.Equals(
+                    item.Name,
+                    name?.Trim(),
+                    StringComparison.OrdinalIgnoreCase)))
+        {
+            throw new DomainException(
+                "A menu item with this name already exists in the category.");
+        }
+
+        menuItem.Update(name, price, description, displayOrder);
     }
 }

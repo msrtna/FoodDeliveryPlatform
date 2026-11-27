@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿
+using Microsoft.EntityFrameworkCore;
 using Restaurant.Application.Abstractions.Persistence;
 using Restaurant.Domain.Entities;
 using Restaurant.Infrastructure.Persistence.Context;
@@ -21,6 +22,20 @@ public sealed class MenuCategoryRepository : IMenuCategoryRepository
     {
         return _dbContext.Set<MenuCategory>()
             .AsNoTracking()
+            .FirstOrDefaultAsync(
+                category =>
+                    category.Id == categoryId &&
+                    category.RestaurantId == restaurantId,
+                cancellationToken);
+    }
+
+    public Task<MenuCategory?> GetByIdForUpdateAsync(
+        Guid restaurantId,
+        Guid categoryId,
+        CancellationToken cancellationToken = default)
+    {
+        return _dbContext.Set<MenuCategory>()
+            .Include(category => category.MenuItems)
             .FirstOrDefaultAsync(
                 category =>
                     category.Id == categoryId &&

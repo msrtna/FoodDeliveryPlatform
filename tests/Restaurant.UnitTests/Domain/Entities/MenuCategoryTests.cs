@@ -8,23 +8,21 @@ public sealed class MenuCategoryTests
     [Fact]
     public void Constructor_WithValidData_CreatesCategory()
     {
-        // Arrange
         var restaurantId = Guid.NewGuid();
 
-        // Act
         var category = new MenuCategory(
             restaurantId,
             "  Pizza  ",
             "  Different types of pizza  ",
             2);
 
-        // Assert
         Assert.NotEqual(Guid.Empty, category.Id);
         Assert.Equal(restaurantId, category.RestaurantId);
         Assert.Equal("Pizza", category.Name);
         Assert.Equal("Different types of pizza", category.Description);
         Assert.Equal(2, category.DisplayOrder);
         Assert.True(category.IsActive);
+        Assert.Empty(category.MenuItems);
     }
 
     [Fact]
@@ -79,16 +77,13 @@ public sealed class MenuCategoryTests
     [Fact]
     public void Update_WithValidData_UpdatesCategory()
     {
-        // Arrange
         var category = CreateCategory();
 
-        // Act
         category.Update(
             "  Burgers  ",
             "  Different types of burgers  ",
             3);
 
-        // Assert
         Assert.Equal("Burgers", category.Name);
         Assert.Equal("Different types of burgers", category.Description);
         Assert.Equal(3, category.DisplayOrder);
@@ -133,11 +128,88 @@ public sealed class MenuCategoryTests
         Assert.False(category.IsActive);
     }
 
+    [Fact]
+    public void AddMenuItem_WithValidItem_AddsItemToCategory()
+    {
+        var category = CreateCategory();
+        var item = CreateMenuItem(category, "Margherita");
+
+        category.AddMenuItem(item);
+
+        Assert.Single(category.MenuItems);
+        Assert.Contains(item, category.MenuItems);
+    }
+
+    [Fact]
+    public void AddMenuItem_WithItemFromAnotherCategory_ThrowsDomainException()
+    {
+        var category = CreateCategory();
+        var anotherCategory = CreateCategory();
+        var item = CreateMenuItem(anotherCategory, "Margherita");
+
+        Assert.Throws<DomainException>(() =>
+            category.AddMenuItem(item));
+    }
+
+    [Fact]
+    public void AddMenuItem_WithDuplicateName_ThrowsDomainException()
+    {
+        var category = CreateCategory();
+
+        category.AddMenuItem(CreateMenuItem(category, "Margherita"));
+
+        var duplicateItem = CreateMenuItem(category, "margherita");
+
+        Assert.Throws<DomainException>(() =>
+            category.AddMenuItem(duplicateItem));
+    }
+
+    [Fact]
+    public void AddMenuItem_WithNullItem_ThrowsArgumentNullException()
+    {
+        var category = CreateCategory();
+
+        Assert.Throws<ArgumentNullException>(() =>
+            category.AddMenuItem(null!));
+    }
+
+    [Fact]
+    public void RemoveMenuItem_WithExistingItem_RemovesItem()
+    {
+        var category = CreateCategory();
+        var item = CreateMenuItem(category, "Margherita");
+
+        category.AddMenuItem(item);
+
+        category.RemoveMenuItem(item.Id);
+
+        Assert.Empty(category.MenuItems);
+    }
+
+    [Fact]
+    public void RemoveMenuItem_WithUnknownId_ThrowsDomainException()
+    {
+        var category = CreateCategory();
+
+        Assert.Throws<DomainException>(() =>
+            category.RemoveMenuItem(Guid.NewGuid()));
+    }
+
     private static MenuCategory CreateCategory()
     {
         return new MenuCategory(
             Guid.NewGuid(),
             "Pizza",
             "Pizza category");
+    }
+
+    private static MenuItem CreateMenuItem(
+        MenuCategory category,
+        string name)
+    {
+        return new MenuItem(
+            category.Id,
+            name,
+            10m);
     }
 }
